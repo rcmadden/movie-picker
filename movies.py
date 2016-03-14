@@ -3,8 +3,6 @@ import random
 from urllib.request import urlopen
 import pprint
 
-
-
 DEFAULT_CATEGORY = "American_science_fiction_action_films"
 WIKIPEDIA_CATEGORY_URL = "https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&cmtitle=Category:{}&format=json&cmlimit=250&cmcontinue={}"
 OMDBAPI_TITLE_URL = "http://www.omdbapi.com/?t={}&y=&plot=short&r=json&tomatoes=true"
@@ -40,7 +38,6 @@ def filter_titles(members):
     '''
     Filter and clean the raw page titles from Wikipedia categorymembers call.
     '''
-    # import pdb; pdb.set_trace()
     titles = []
     for m in members:
         title = m['title']
@@ -48,13 +45,12 @@ def filter_titles(members):
             continue #ignore sub-categories
         title = clean_title(title)
         titles.append(title)
-    pprint.pprint(titles)
+    return titles
 
 def fetch_wikipedia_titles(category):
     '''
     Returns a list of dictionaries returned by the Wikipedia categorymembers API call.
     '''
-    #TODO: For this code, you will need to do something like the following:
     cmcontinue = ''
     out = []
     while True:
@@ -62,13 +58,9 @@ def fetch_wikipedia_titles(category):
         url = WIKIPEDIA_CATEGORY_URL.format(category, cmcontinue)
         #2. use urllib.urlopen on that URL for python 3 use urllib.request
         #3. use json.loads to parse the response
-        #  response = urlopen(url).read().decode('utf8')
-        # data = json.loads(response)
-
         with urlopen(url) as response:
             html = response.read().decode('utf8')
             data = json.loads(html)
-
         #4. return only the titles from the JSON response (which are inside 'categorymembers')
         # pprint.pprint(data.get('query'))
         out.extend(data['query']['categorymembers']) # list of dictionaries
@@ -76,21 +68,35 @@ def fetch_wikipedia_titles(category):
             break
         #5. (bonus) figure out how to implement retrieving the next page of results (using the 'cmcontinue' value)
         cmcontinue = data['continue']['cmcontinue']
-        # print(cmcontinue)
-        # print(type(cmcontinue))
-        # print(data['continue']['cmcontinue'])
     return filter_titles(out)
 
 def fetch_omdb_info(title):
     '''
     Retrieve movie information from OMDb API's title search.
     '''
+    # import pdb; pdb.set_trace()
     #TODO: Similar to fetch_wikipedia_titles, but a little simpler:
     #1. build the URL using OMDBAPI_TITLE_URL
+    omdb_url = OMDBAPI_TITLE_URL.format(title)
+    # omdb_url = OMDBAPI_TITLE_URL.format(title.encode('utf8'))
     #2. use urllib.urlopen on that URL
+    # print(urlopen(OMDBAPI_TITLE_URL))
+    with urlopen(omdb_url) as response:
+        # print(response)
+        html = response.read().decode('utf8')
+        data = json.loads(html)
+        # html = response.read()
+        # html.encode('ascii')
+        # data = html.decode('utf8')
+        print(data)
+        # data = json.loads(html)
+    # if data.get('Error'):
+        # raise RuntimeError("OMDb API returned {!r} when looking up {!r}".format(data['Error'], title))
+    # pprint.pprint(omdb_url)
     #3. use json.loads to parse the response
     #4. return that data (it will be a python dictionary)
-    return {}
+    # return {}
+
 
 ## classes ####################################################################
 
@@ -152,9 +158,12 @@ class MoviePicker(object):
 def main():
     # picker = MoviePicker(fetch_wikipedia_titles(DEFAULT_CATEGORY))
     # return picker
-    fetch_wikipedia_titles(DEFAULT_CATEGORY)
+    # fetch_wikipedia_titles(DEFAULT_CATEGORY)
+    wiki_titles = fetch_wikipedia_titles(DEFAULT_CATEGORY)
+    fetch_omdb_info(wiki_titles)
+    # pprint.pprint(wiki_titles)
     # num_picked = 0
-    # while num_picked < NUM_MOVIES:
+    # while num_picked < NppUM_MOVIES:
     #     movie = picker.get_random_movie()
     #     print(movie)
     #     answer = raw_input("Add movie to your list? ")
