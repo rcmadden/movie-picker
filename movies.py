@@ -1,6 +1,10 @@
 import json
 import random
 from urllib.request import urlopen
+from urllib.parse import quote
+# import urllib
+# import urllib.request
+# from urllib.parse import urlparse
 import pprint
 
 DEFAULT_CATEGORY = "American_science_fiction_action_films"
@@ -72,30 +76,21 @@ def fetch_wikipedia_titles(category):
 
 def fetch_omdb_info(title):
     '''
-    Retrieve movie information from OMDb API's title search.
+    Retrieve movie information from OMDb API's title search. and encode url spaces https://docs.python.org/3/library/urllib.parse.html
     '''
     # import pdb; pdb.set_trace()
     #TODO: Similar to fetch_wikipedia_titles, but a little simpler:
-    #1. build the URL using OMDBAPI_TITLE_URL
-    omdb_url = OMDBAPI_TITLE_URL.format(title)
-    # omdb_url = OMDBAPI_TITLE_URL.format(title.encode('utf8'))
+    #1. build the URL using OMDBAPI_TITLE_URL iterate through list of titles here or in main?
+    omdb_url = OMDBAPI_TITLE_URL.format(quote(title))
     #2. use urllib.urlopen on that URL
-    # print(urlopen(OMDBAPI_TITLE_URL))
     with urlopen(omdb_url) as response:
-        # print(response)
-        html = response.read().decode('utf8')
-        data = json.loads(html)
-        # html = response.read()
-        # html.encode('ascii')
-        # data = html.decode('utf8')
-        print(data)
-        # data = json.loads(html)
+            html = response.read().decode('utf8')
+            data = json.loads(html)
     # if data.get('Error'):
         # raise RuntimeError("OMDb API returned {!r} when looking up {!r}".format(data['Error'], title))
-    # pprint.pprint(omdb_url)
     #3. use json.loads to parse the response
     #4. return that data (it will be a python dictionary)
-    # return {}
+    return data
 
 
 ## classes ####################################################################
@@ -160,8 +155,10 @@ def main():
     # return picker
     # fetch_wikipedia_titles(DEFAULT_CATEGORY)
     wiki_titles = fetch_wikipedia_titles(DEFAULT_CATEGORY)
-    fetch_omdb_info(wiki_titles)
+    return fetch_omdb_info(wiki_titles[0])
+
     # pprint.pprint(wiki_titles)
+    # pprint.pprint(wiki_tites)
     # num_picked = 0
     # while num_picked < NppUM_MOVIES:
     #     movie = picker.get_random_movie()
