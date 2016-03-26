@@ -152,13 +152,11 @@ class MoviePicker(object):
 
     def add_to_list(self, m):
         '''Add the given Movie object `m` to the list of picked movies.'''
-        # TODO: just append the given Movie object to self.picked
-        pass
+        self.picked.append(m)
 
     def get_list(self):
         '''Returns a list of picked titles.'''
-        #TODO: return `m.title` for each of the movies in self.picked
-        pass
+        return self.picked
 
 
 def main():
@@ -186,7 +184,7 @@ def main():
         print(title)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     # TODO: (bonus) Use sys.argv to get a category name on the command
     # line (but defaulting to DEFAULT_CATEGORY if nothing is passed in)
     main()
