@@ -86,13 +86,12 @@ def fetch_omdb_info(title):
     Retrieve movie information from OMDb API's title search. and encode url spaces https://docs.python.org/3/library/urllib.parse.html
     '''
     # import pdb; pdb.set_trace()
-    #TODO: Similar to fetch_wikipedia_titles, but a little simpler:
     #1. build the URL using OMDBAPI_TITLE_URL iterate through list of titles here or in main?
     omdb_url = OMDBAPI_TITLE_URL.format(quote(title))
     #2. use urllib.urlopen on that URL
     with urlopen(omdb_url) as response:
-            html = response.read().decode('utf8')
-            data = json.loads(html)
+            body = response.read().decode('utf8')
+            data = json.loads(body)
     # if data.get('Error'):
         # raise RuntimeError("OMDb API returned {!r} when looking up {!r}".format(data['Error'], title))
     #3. use json.loads to parse the response
@@ -105,15 +104,20 @@ class Movie(object):
     Represents a movie with data from the omdbapi.com.
     '''
     def __init__(self, data):
-        log.debug('movie data keys: %s', data.keys())
+        # log.debug('movie data keys: %s', data.keys())
+        # log.debug(('movie data keys: {}'.format(data.keys())))
         self.data = data
 
     @property
     def title(self):
         return self.data['Title']
 
+    @property
+    def poster_url(self):
+        url = self.data.get('Poster')
+        return '' if url == 'N/A' else url
+
     def __str__(self):
-        # TODO: Move your formatting code from ex3.py into this
         # __str__ method.  When you `print` an object, its __str__
         # method (if it has one) is called to turn the object into a
         # string. Instead of directly printing it, just build up the
@@ -156,6 +160,7 @@ class MoviePicker(object):
 
     def get_list(self):
         '''Returns a list of picked titles.'''
+        # return [m.title for m in self.picked]
         return self.picked
 
 
@@ -167,7 +172,8 @@ def main():
     # fetch_wikipedia_titles(DEFAULT_CATEGORY)
     wiki_titles = fetch_wikipedia_titles(DEFAULT_CATEGORY)
 
-    log.debug('titles: %s', pformat(wiki_titles))
+    # log.debug('titles: %s', pformat(wiki_titles))
+    log.debug(('titles: {}'.format(pformat(wiki_titles))))
 
     picker = MoviePicker(wiki_titles)
 

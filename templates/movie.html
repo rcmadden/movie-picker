@@ -1,0 +1,11 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<h1>{{title}}</h1>
+<h3>movie.html</h3>
+
+
+<p>    {{movie}} </p>
+<p>    <img src="{{url_for('rehost_image', url=movie_poster_url)}}" /></span> </p>
+
+{% endblock %}

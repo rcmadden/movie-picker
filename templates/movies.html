@@ -1,0 +1,12 @@
+<html>
+<body>
+<h1>{{category.replace('_', ' ')}}</h1>
+<h3>movies.html</h3>
+<ul>
+{% for title in titles %}
+<!--<li><a href="/movie/#TODO">{{title}}</a></li>-->
+    <li><a href="{{url_for('show_movie', title=title)}}">{{title}}</a></li>
+{% endfor %}
+</ul>
+</body>
+</html>

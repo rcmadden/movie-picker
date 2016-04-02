@@ -1,6 +1,27 @@
+import ex5
+import sqlite3
+
 # Extend the movie picker Flask application from exercise 5 a database, forms, user registration/login, sessions, and (bonus) an AJAX call. The new pieces of functionality we want are:
 
 # Store the movie categories in a database, replacing the list of default categories.
+print(ex5.categories)
+
+# connect to sqlite db in memory
+conn = sqlite3.connect(":memory:")
+q = conn.cursor()
+q.execute('CREATE TABLE movie_categories(category string)')
+records = [[cat] for cat in ex5.categories]
+print(records)
+q.executemany('INSERT INTO movie_categories(category) VALUES (?)', records)
+q.execute('SELECT * FROM movie_categories')
+rows = q.fetchall()
+print(rows)
+
+# list comprehensions
+# returns a list like another with x different
+numbers = [1, 2, 3, 4, 5]
+evens = [x*2 for x in numbers if x < 4]
+
 # Allow users to register and log in, storing user credentials in the database.
 # Allow logged in users to add new categories to the database.
 # (Bonus) Allow the logged in user to add or remove movies on their "list" using AJAX.
